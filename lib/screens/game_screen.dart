@@ -61,51 +61,73 @@ class _GameScreenState extends State<GameScreen> {
               Positioned.fill(
                 child: Image.asset(Assets.backgroundImage, fit: BoxFit.cover),
               ),
+              if (!gameProvider.isPlayerBatting)
+                Positioned(
+                  top: size.height * 0.19,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: Text(
+                      "Run to win: ${gameProvider.runToWin}",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
               Positioned(
                 top: size.height * 0.05,
                 left: 20,
                 right: 20,
-                child: ScoreCard(
-                  playerScore: gameProvider.playerScore,
-                  computerScore: gameProvider.computerScore,
-                  isPlayerBatting: gameProvider.isPlayerBatting,
+                child: Center(
+                  child: ScoreCard(
+                    playerScore: gameProvider.playerScore,
+                    computerScore: gameProvider.computerScore,
+                    isPlayerBatting: gameProvider.isPlayerBatting,
+                  ),
                 ),
               ),
               Positioned(
                 left: 0,
                 right: 0,
                 bottom: MediaQuery.sizeOf(context).height * 0.1,
-                child: Column(
-                  children: List.generate(2, (rowIndex) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: List.generate(3, (index) {
-                        final run = runButtons[rowIndex * 3 + index];
-                        return RunButton(
-                          image: run['image'] as String,
-                          onTap: () async {
-                            int runToThisBall = run['run'] as int;
-                            gameProvider.playMove(runToThisBall);
-                            if (runToThisBall == 6) {
-                              showCustomDialog(image: Assets.sixerImage);
-                            } else if (gameProvider.isOut) {
-                              await showCustomDialog(image: Assets.outImage);
-                              showCustomDialog(
-                                image: Assets.gameDefendImage,
-                                scoreDefend: gameProvider.totalPlayerScore,
-                              );
-                            } else if (gameProvider.overComplete) {
-                              showCustomDialog(
-                                image: Assets.gameDefendImage,
-                                scoreDefend: gameProvider.totalPlayerScore,
-                              );
-                            }
-                          },
-                          size: size.height * 0.1,
-                        );
-                      }),
-                    );
-                  }),
+                child: Center(
+                  child: Column(
+                    children: List.generate(2, (rowIndex) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: List.generate(3, (index) {
+                          final run = runButtons[rowIndex * 3 + index];
+                          return RunButton(
+                            image: run['image'] as String,
+                            onTap: () async {
+                              int runToThisBall = run['run'] as int;
+                              gameProvider.playMove(runToThisBall);
+                              if (runToThisBall == 6) {
+                                showCustomDialog(image: Assets.sixerImage);
+                              } else if (gameProvider.isOut) {
+                                await showCustomDialog(image: Assets.outImage);
+                                showCustomDialog(
+                                  image: Assets.gameDefendImage,
+                                  scoreDefend: gameProvider.totalPlayerScore,
+                                );
+                              } else if (gameProvider.overComplete) {
+                                showCustomDialog(
+                                  image: Assets.gameDefendImage,
+                                  scoreDefend: gameProvider.totalPlayerScore,
+                                );
+                              } else if (gameProvider.playerWon) {
+                                showCustomDialog(image: Assets.youWonImage);
+                              }
+                            },
+                            size: size.height * 0.1,
+                          );
+                        }),
+                      );
+                    }),
+                  ),
                 ),
               ),
               Positioned(
@@ -126,10 +148,7 @@ class _GameScreenState extends State<GameScreen> {
                         transform: Matrix4.identity()..rotateY(3.14),
                         alignment: Alignment.center,
                         child: HandAnimation(
-                          handIndex:
-                              gameProvider.playerScore.isNotEmpty
-                                  ? gameProvider.playerScore.last
-                                  : 0,
+                          handIndex: gameProvider.playerRun,
                         ),
                       ),
                       HandAnimation(handIndex: gameProvider.computerRun),

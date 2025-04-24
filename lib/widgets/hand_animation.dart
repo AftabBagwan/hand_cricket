@@ -31,7 +31,7 @@ class _HandAnimationState extends State<HandAnimation> {
     final val = index.toDouble();
     _handInput?.value = val == 1 ? 0 : val - 1;
 
-    Future.delayed(const Duration(milliseconds: 1), () {
+    Future.delayed(const Duration(milliseconds: 2), () {
       _handInput?.value = val;
     });
   }

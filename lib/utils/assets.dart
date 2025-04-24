@@ -11,6 +11,7 @@ class Assets {
   static const String ballImage = "assets/ball.png";
   static const String gameDefendImage = "assets/game_defend.webp";
   static const String sixerImage = "assets/sixer.png";
+  static const String youWonImage = "assets/you_won.png";
 
   static const String riveFile = "assets/hand_cricket.riv";
 }

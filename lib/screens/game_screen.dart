@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hand_cricket/providers/game_provider.dart';
 import 'package:hand_cricket/utils/assets.dart';
+import 'package:hand_cricket/widgets/custom_dialog.dart';
 import 'package:hand_cricket/widgets/hand_animation.dart';
 import 'package:hand_cricket/widgets/run_button.dart';
+import 'package:hand_cricket/widgets/score_card.dart';
 import 'package:provider/provider.dart';
 
 class GameScreen extends StatefulWidget {
@@ -13,6 +15,23 @@ class GameScreen extends StatefulWidget {
 }
 
 class _GameScreenState extends State<GameScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showCustomDialog(Assets.battingImage);
+    });
+  }
+
+  void showCustomDialog(String image) async {
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return CustomDialog(image: image);
+      },
+    );
+  }
+
   final runButtons = [
     {'run': 1, 'image': Assets.oneImage},
     {'run': 2, 'image': Assets.twoImage},
@@ -31,7 +50,13 @@ class _GameScreenState extends State<GameScreen> {
           return Stack(
             children: [
               Positioned.fill(
-                child: Image.asset("assets/background.png", fit: BoxFit.cover),
+                child: Image.asset(Assets.backgroundImage, fit: BoxFit.cover),
+              ),
+              Positioned(
+                top: size.height * 0.05,
+                left: 20,
+                right: 20,
+                child: ScoreCard(runsScored: gameProvider.runsScored),
               ),
               Positioned(
                 left: 0,
@@ -47,6 +72,9 @@ class _GameScreenState extends State<GameScreen> {
                           image: run['image'] as String,
                           onTap: () {
                             gameProvider.playMove(run['run'] as int);
+                            if (gameProvider.isOut) {
+                              showCustomDialog(Assets.outImage);
+                            }
                           },
                           size: size.height * 0.1,
                         );

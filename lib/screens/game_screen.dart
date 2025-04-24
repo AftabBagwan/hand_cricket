@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hand_cricket/utils/assets.dart';
+import 'package:hand_cricket/widgets/hand_animation.dart';
 
 class GameScreen extends StatelessWidget {
   const GameScreen({super.key});
@@ -68,6 +69,34 @@ class GameScreen extends StatelessWidget {
               ],
             ),
           ),
+          Positioned(
+            top: size.height * 0.2,
+            child: Container(
+              height: size.height * 0.2,
+              width: size.width - 40,
+              margin: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(25),
+                border: Border.all(color: Colors.grey),
+                color: Colors.transparent,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Transform(
+                    transform: Matrix4.identity()..rotateY(3.14),
+                    alignment: Alignment.center,
+                    child: HandAnimation(
+                      handIndex: 2,
+                    ),
+                  ),
+                  HandAnimation(
+                    handIndex: 3,
+                  ),
+                ],
+              ),
+            ),
+          )
         ],
       ),
     );

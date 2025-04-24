@@ -11,6 +11,8 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
+  provider: ^6.1.4
+  rive: ^0.13.20
 
 dev_dependencies:
   flutter_test:

@@ -5,4 +5,6 @@ class Assets {
   static const String fourImage = "assets/four.png";
   static const String fiveImage = "assets/five.png";
   static const String sixImage = "assets/six.png";
+
+  static const String riveFile = "assets/hand_cricket.riv";
 }

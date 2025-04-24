@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hand_cricket/providers/game_provider.dart';
 import 'package:hand_cricket/screens/game_screen.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +17,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: GameScreen(),
+      home: MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => GameProvider()),
+        ],
+        child: GameScreen(),
+      ),
     );
   }
 }

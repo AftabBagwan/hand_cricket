@@ -65,7 +65,11 @@ class _GameScreenState extends State<GameScreen> {
                 top: size.height * 0.05,
                 left: 20,
                 right: 20,
-                child: ScoreCard(runsScored: gameProvider.runsScored),
+                child: ScoreCard(
+                  playerScore: gameProvider.playerScore,
+                  computerScore: gameProvider.computerScore,
+                  isPlayerBatting: gameProvider.isPlayerBatting,
+                ),
               ),
               Positioned(
                 left: 0,
@@ -88,12 +92,12 @@ class _GameScreenState extends State<GameScreen> {
                               await showCustomDialog(image: Assets.outImage);
                               showCustomDialog(
                                 image: Assets.gameDefendImage,
-                                scoreDefend: gameProvider.totalScore,
+                                scoreDefend: gameProvider.totalPlayerScore,
                               );
                             } else if (gameProvider.overComplete) {
                               showCustomDialog(
                                 image: Assets.gameDefendImage,
-                                scoreDefend: gameProvider.totalScore,
+                                scoreDefend: gameProvider.totalPlayerScore,
                               );
                             }
                           },
@@ -123,8 +127,8 @@ class _GameScreenState extends State<GameScreen> {
                         alignment: Alignment.center,
                         child: HandAnimation(
                           handIndex:
-                              gameProvider.runsScored.isNotEmpty
-                                  ? gameProvider.runsScored.last
+                              gameProvider.playerScore.isNotEmpty
+                                  ? gameProvider.playerScore.last
                                   : 0,
                         ),
                       ),

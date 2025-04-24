@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class CustomDialog extends StatelessWidget {
-  const CustomDialog({super.key, required this.image, this.scoreDefend});
-  final String image;
+  const CustomDialog({super.key, this.image, this.scoreDefend});
+  final String? image;
   final int? scoreDefend;
 
   @override
@@ -12,7 +12,7 @@ class CustomDialog extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          Image.asset(image),
+          if (image != null) Image.asset(image!),
           if (scoreDefend != null)
             Padding(
               padding: const EdgeInsets.only(top: 40.0),
@@ -25,6 +25,16 @@ class CustomDialog extends StatelessWidget {
                 ),
               ),
             ),
+          if (image == null)
+            Text(
+              "You Lost, \n Computer Won",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+            )
         ],
       ),
     );

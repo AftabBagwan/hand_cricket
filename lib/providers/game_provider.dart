@@ -49,6 +49,9 @@ class GameProvider extends ChangeNotifier {
     if (!isPlayerBatting) {
       playerWon = true;
       isOut = false;
+      _resetForNewGame();
+      notifyListeners();
+      return true;
     }
 
     _resetAfterPlayerOut();
@@ -87,5 +90,23 @@ class GameProvider extends ChangeNotifier {
     computerScore.clear();
     totalComputerScore = 0;
     runToWin = totalPlayerScore;
+  }
+
+  void _resetForNewGame() {
+    playerScore.clear();
+    computerScore.clear();
+
+    computerRun = 0;
+    playerRun = 0;
+
+    totalPlayerScore = 0;
+    totalComputerScore = 0;
+    runToWin = 0;
+
+    isOut = false;
+    overComplete = false;
+    isPlayerBatting = true;
+    computerWon = false;
+    // playerWon = false;
   }
 }

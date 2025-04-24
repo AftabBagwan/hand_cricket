@@ -23,10 +23,7 @@ class _GameScreenState extends State<GameScreen> {
     });
   }
 
-  Future<void> showCustomDialog({
-    required String image,
-    int? scoreDefend,
-  }) async {
+  Future<void> showCustomDialog({String? image, int? scoreDefend}) async {
     await showDialog(
       context: context,
       builder: (context) {
@@ -119,7 +116,12 @@ class _GameScreenState extends State<GameScreen> {
                                   scoreDefend: gameProvider.totalPlayerScore,
                                 );
                               } else if (gameProvider.playerWon) {
-                                showCustomDialog(image: Assets.youWonImage);
+                                await showCustomDialog(
+                                  image: Assets.youWonImage,
+                                );
+                                gameProvider.playerWon = false;
+                              } else if (gameProvider.computerWon) {
+                                showCustomDialog();
                               }
                             },
                             size: size.height * 0.1,
@@ -147,9 +149,7 @@ class _GameScreenState extends State<GameScreen> {
                       Transform(
                         transform: Matrix4.identity()..rotateY(3.14),
                         alignment: Alignment.center,
-                        child: HandAnimation(
-                          handIndex: gameProvider.playerRun,
-                        ),
+                        child: HandAnimation(handIndex: gameProvider.playerRun),
                       ),
                       HandAnimation(handIndex: gameProvider.computerRun),
                     ],

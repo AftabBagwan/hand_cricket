@@ -9,6 +9,8 @@ class Assets {
   static const String outImage = "assets/out.png";
   static const String battingImage = "assets/batting.png";
   static const String ballImage = "assets/ball.png";
+  static const String gameDefendImage = "assets/game_defend.webp";
+  static const String sixerImage = "assets/sixer.png";
 
   static const String riveFile = "assets/hand_cricket.riv";
 }

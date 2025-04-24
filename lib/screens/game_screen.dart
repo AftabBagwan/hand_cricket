@@ -19,15 +19,24 @@ class _GameScreenState extends State<GameScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      showCustomDialog(Assets.battingImage);
+      showCustomDialog(image: Assets.battingImage);
     });
   }
 
-  void showCustomDialog(String image) async {
+  Future<void> showCustomDialog({
+    required String image,
+    int? scoreDefend,
+  }) async {
     await showDialog(
       context: context,
       builder: (context) {
-        return CustomDialog(image: image);
+        Future.delayed(const Duration(seconds: 2), () {
+          if (!context.mounted) return;
+          if (Navigator.of(context).canPop()) {
+            Navigator.of(context).pop();
+          }
+        });
+        return CustomDialog(image: image, scoreDefend: scoreDefend);
       },
     );
   }
@@ -70,10 +79,22 @@ class _GameScreenState extends State<GameScreen> {
                         final run = runButtons[rowIndex * 3 + index];
                         return RunButton(
                           image: run['image'] as String,
-                          onTap: () {
-                            gameProvider.playMove(run['run'] as int);
-                            if (gameProvider.isOut) {
-                              showCustomDialog(Assets.outImage);
+                          onTap: () async {
+                            int runToThisBall = run['run'] as int;
+                            gameProvider.playMove(runToThisBall);
+                            if (runToThisBall == 6) {
+                              showCustomDialog(image: Assets.sixerImage);
+                            } else if (gameProvider.isOut) {
+                              await showCustomDialog(image: Assets.outImage);
+                              showCustomDialog(
+                                image: Assets.gameDefendImage,
+                                scoreDefend: gameProvider.totalScore,
+                              );
+                            } else if (gameProvider.overComplete) {
+                              showCustomDialog(
+                                image: Assets.gameDefendImage,
+                                scoreDefend: gameProvider.totalScore,
+                              );
                             }
                           },
                           size: size.height * 0.1,

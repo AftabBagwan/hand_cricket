@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:hand_cricket/providers/game_provider.dart';
 import 'package:hand_cricket/utils/assets.dart';
@@ -7,6 +9,8 @@ import 'package:hand_cricket/widgets/run_button.dart';
 import 'package:hand_cricket/widgets/score_card.dart';
 import 'package:hand_cricket/widgets/welcome_dialog.dart';
 import 'package:provider/provider.dart';
+import 'package:timer_count_down/timer_controller.dart';
+import 'package:timer_count_down/timer_count_down.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -16,9 +20,12 @@ class GameScreen extends StatefulWidget {
 }
 
 class _GameScreenState extends State<GameScreen> {
+  late CountdownController _countdownController;
+
   @override
   void initState() {
     super.initState();
+    _countdownController = CountdownController(autoStart: false);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await showDialog(
         context: context,
@@ -27,10 +34,12 @@ class _GameScreenState extends State<GameScreen> {
         },
       );
       showCustomDialog(image: Assets.battingImage);
+      _countdownController.start();
     });
   }
 
   Future<void> showCustomDialog({String? image, int? scoreDefend}) async {
+    _countdownController.pause();
     await showDialog(
       context: context,
       builder: (context) {
@@ -43,6 +52,7 @@ class _GameScreenState extends State<GameScreen> {
         return CustomDialog(image: image, scoreDefend: scoreDefend);
       },
     );
+    _countdownController.start();
   }
 
   final runButtons = [
@@ -96,7 +106,37 @@ class _GameScreenState extends State<GameScreen> {
               Positioned(
                 left: 0,
                 right: 0,
-                bottom: MediaQuery.sizeOf(context).height * 0.1,
+                bottom: size.height * 0.35,
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 2),
+                    color: Colors.transparent,
+                  ),
+                  child: Center(
+                    child: Countdown(
+                      controller: _countdownController,
+                      seconds: 10,
+                      build:
+                          (BuildContext context, double time) => Text(
+                            time.toInt().toString(),
+                            style: TextStyle(color: Colors.white, fontSize: 22),
+                          ),
+                      interval: Duration(seconds: 1),
+                      onFinished: () async {
+                        await showCustomDialog();
+                        gameProvider.resetForNewGame();
+                           _countdownController.restart();
+                      },
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: size.height * 0.1,
                 child: Center(
                   child: Column(
                     children: List.generate(2, (rowIndex) {
@@ -134,6 +174,13 @@ class _GameScreenState extends State<GameScreen> {
                               } else if (gameProvider.computerWon) {
                                 showCustomDialog();
                                 gameProvider.computerWon = false;
+                              }
+
+                              if (!gameProvider.isOut &&
+                                  !gameProvider.overComplete &&
+                                  !gameProvider.playerWon &&
+                                  !gameProvider.computerWon) {
+                                _countdownController.restart();
                               }
                             },
                             size: size.height * 0.1,

@@ -48,7 +48,7 @@ class GameProvider extends ChangeNotifier {
 
     if (!isPlayerBatting) {
       playerWon = true;
-      _resetForNewGame();
+      resetForNewGame();
       return;
     }
 
@@ -85,14 +85,14 @@ class GameProvider extends ChangeNotifier {
 
     if (runToWin <= 0) {
       computerWon = true;
-      _resetForNewGame();
+      resetForNewGame();
     } else if (computerScore.length >= maxBalls) {
       playerWon = true;
-      _resetForNewGame();
+      resetForNewGame();
     }
   }
 
-  void _resetForNewGame() {
+  void resetForNewGame() {
     playerScore.clear();
     computerScore.clear();
 

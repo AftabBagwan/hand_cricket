@@ -23,46 +23,45 @@ class GameProvider extends ChangeNotifier {
   final Random _random = Random();
 
   void playMove(int run) {
+    if (playerWon || computerWon) return;
+
     playerRun = run;
     computerRun = _random.nextInt(6) + 1;
 
-    _updateComputerScore();
-    
-    if (_checkOutCondition()) return;
+    if (run == computerRun) {
+      _handleOut();
+      return;
+    }
 
-    if (isPlayerBatting) _updatePlayerScore(run);
+    if (isPlayerBatting) {
+      _updatePlayerScore(run);
+    } else {
+      _updateComputerScore();
+    }
 
     notifyListeners();
   }
 
-  void _updateComputerScore() {
-    computerScore.add(computerRun);
-    totalComputerScore += computerRun;
-    runToWin -= computerRun;
-  }
-
-  bool _checkOutCondition() {
-    if (playerRun != computerRun) return false;
-
+  void _handleOut() {
     isOut = true;
+    notifyListeners();
 
     if (!isPlayerBatting) {
       playerWon = true;
-      isOut = false;
       _resetForNewGame();
-      notifyListeners();
-      return true;
+      return;
     }
 
-    _resetAfterPlayerOut();
+    isPlayerBatting = false;
+    runToWin = totalPlayerScore;
+    playerScore.clear();
+    computerScore.clear();
+    totalComputerScore = 0;
 
     Future.microtask(() {
       isOut = false;
       notifyListeners();
     });
-
-    notifyListeners();
-    return true;
   }
 
   void _updatePlayerScore(int run) {
@@ -72,24 +71,25 @@ class GameProvider extends ChangeNotifier {
     if (playerScore.length >= maxBalls) {
       overComplete = true;
       isPlayerBatting = false;
-      _prepareForSecondInnings();
+      runToWin = totalPlayerScore;
+      playerScore.clear();
+      computerScore.clear();
+      totalComputerScore = 0;
     }
   }
 
-  void _resetAfterPlayerOut() {
-    isPlayerBatting = false;
-    runToWin = totalPlayerScore;
+  void _updateComputerScore() {
+    computerScore.add(computerRun);
+    totalComputerScore += computerRun;
+    runToWin -= computerRun;
 
-    playerScore.clear();
-    computerScore.clear();
-    totalComputerScore = 0;
-  }
-
-  void _prepareForSecondInnings() {
-    playerScore.clear();
-    computerScore.clear();
-    totalComputerScore = 0;
-    runToWin = totalPlayerScore;
+    if (runToWin <= 0) {
+      computerWon = true;
+      _resetForNewGame();
+    } else if (computerScore.length >= maxBalls) {
+      playerWon = true;
+      _resetForNewGame();
+    }
   }
 
   void _resetForNewGame() {
@@ -106,7 +106,6 @@ class GameProvider extends ChangeNotifier {
     isOut = false;
     overComplete = false;
     isPlayerBatting = true;
-    computerWon = false;
-    // playerWon = false;
+    notifyListeners();
   }
 }

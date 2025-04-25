@@ -5,6 +5,7 @@ import 'package:hand_cricket/widgets/custom_dialog.dart';
 import 'package:hand_cricket/widgets/hand_animation.dart';
 import 'package:hand_cricket/widgets/run_button.dart';
 import 'package:hand_cricket/widgets/score_card.dart';
+import 'package:hand_cricket/widgets/welcome_dialog.dart';
 import 'package:provider/provider.dart';
 
 class GameScreen extends StatefulWidget {
@@ -18,7 +19,13 @@ class _GameScreenState extends State<GameScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return WelcomeDialog();
+        },
+      );
       showCustomDialog(image: Assets.battingImage);
     });
   }
@@ -103,8 +110,11 @@ class _GameScreenState extends State<GameScreen> {
                               int runToThisBall = run['run'] as int;
                               gameProvider.playMove(runToThisBall);
                               if (runToThisBall == 6) {
-                                showCustomDialog(image: Assets.sixerImage);
-                              } else if (gameProvider.isOut) {
+                                await showCustomDialog(
+                                  image: Assets.sixerImage,
+                                );
+                              }
+                              if (gameProvider.isOut) {
                                 await showCustomDialog(image: Assets.outImage);
                                 showCustomDialog(
                                   image: Assets.gameDefendImage,
@@ -115,6 +125,7 @@ class _GameScreenState extends State<GameScreen> {
                                   image: Assets.gameDefendImage,
                                   scoreDefend: gameProvider.totalPlayerScore,
                                 );
+                                gameProvider.overComplete = false;
                               } else if (gameProvider.playerWon) {
                                 await showCustomDialog(
                                   image: Assets.youWonImage,
@@ -122,6 +133,7 @@ class _GameScreenState extends State<GameScreen> {
                                 gameProvider.playerWon = false;
                               } else if (gameProvider.computerWon) {
                                 showCustomDialog();
+                                gameProvider.computerWon = false;
                               }
                             },
                             size: size.height * 0.1,

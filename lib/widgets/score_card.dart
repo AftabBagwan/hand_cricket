@@ -24,13 +24,13 @@ class ScoreCard extends StatelessWidget {
           isPlayerBatting ? "Batting" : "Bowling",
           "Player",
           isBatting: isPlayerBatting,
-          score: playerScore,
+          score: score,
         ),
         _scoreColumn(
           isPlayerBatting ? "Bowling" : "Batting",
           "Computer",
           isBatting: !isPlayerBatting,
-          score: computerScore,
+          score: score,
         ),
       ],
     );
